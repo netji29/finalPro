@@ -1,0 +1,36 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: course_registration
+    ports:
+      - "3307:3306"
+  redis:
+    image: redis
+    ports:
+      - "6380:6379"
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000"  # เปลี่ยนพอร์ตเพื่อไม่ให้ชนกันกับ app
+  influxdb:
+    image: influxdb
+    ports:
+      - "8086:8086"
+  k6:
+    image: grafana/k6
+    entrypoint: ["k6", "run", "/scripts/WithRedis.js"]
